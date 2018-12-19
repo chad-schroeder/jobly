@@ -75,7 +75,21 @@ class Company {
    * Get a company:
    *   return {company: companyData}
    */
-  static async getCompany(id) {}
+  static async getCompany(handle) {
+    let result = await db.query(
+      `
+      SELECT
+        *
+      FROM
+        companies
+      WHERE
+        handle = $1
+    `,
+      [handle]
+    );
+
+    return result.rows[0];
+  }
 
   /** PATCH /companies/[handle]
    * Update a company:
@@ -86,6 +100,19 @@ class Company {
    * Delete a company
    *  return {message: "Company deleted"}
    */
+  static async deleteCompany(handle) {
+    let result = await db.query(
+      `
+      DELETE FROM
+        companies
+      WHERE
+        handle = $1
+      `,
+      [handle]
+    );
+
+    return result.rows[0];
+  }
 }
 
 module.exports = Company;

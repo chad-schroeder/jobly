@@ -2,6 +2,8 @@ const Router = require('express').Router;
 const Company = require('../models/company');
 const { validate } = require('jsonschema');
 const companySchema = require('../schemas/createCompany.json');
+const updateCompanySchema = require('../schemas/updateCompany.json');
+const sqlForPartialUpdate = require('../helpers/partialUpdate');
 
 const router = new Router();
 
@@ -51,6 +53,63 @@ router.post('/', async (req, res, next) => {
     return res.json({
       company
     });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.get('/:handle', async (req, res, next) => {
+  try {
+    let handle = req.params.handle;
+
+    let company = await Company.getCompany(handle);
+
+    return res.json({ company });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.patch('/:handle', async (req, res, next) => {
+  try {
+    // verify correct schema
+    let validationResult = validate(req.body, updateCompanySchema);
+
+    if (!validationResult.valid) {
+      // pass validation errors to error handler
+      //  (the "stack" key is generally the most useful)
+      let message = validationResult.errors.map(error => error.stack);
+      let error = new Error(message);
+      error.status = 400;
+      error.message = message;
+      return next(error);
+    }
+
+    let handle = req.params.handle;
+
+    //table, items, key, id
+    let updatedCompany = await sqlForPartialUpdate(
+      'companies',
+      req.body,
+      'handle',
+      handle
+    );
+
+    let company = await Company.getCompany(handle);
+
+    return res.json({ company });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.delete('/:handle', async (req, res, next) => {
+  try {
+    let handle = req.params.handle;
+
+    let result = await Company.deleteCompany(handle);
+
+    return res.json({ message: 'Company deleted' });
   } catch (err) {
     return next(err);
   }
