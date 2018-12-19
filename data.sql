@@ -9,10 +9,10 @@ CREATE TABLE companies (
 );
 
 INSERT INTO companies (handle, name)
-    VALUES ('apple', 'Apple')
+    VALUES ('apple', 'Apple');
 
 INSERT INTO companies (handle, name)
-    VALUES ('google', 'Google')
+    VALUES ('google', 'Google');
 
 INSERT INTO companies (handle, name)
-    VALUES ('ibm', 'IBM')
+    VALUES ('ibm', 'IBM');

@@ -5,7 +5,19 @@ const router = new Router();
 
 router.get('/', async (req, res, next) => {
   try {
-    return res.json({ companies: await Company.getAll() });
+    let { search, min_employees, max_employees } = req.query;
+    console.log(search, min_employees, max_employees);
+
+    if (min_employees > max_employees) {
+      let err = new Error();
+      err.message = 'min_employees cannot be greater than max_employees';
+      err.status = 400;
+      return next();
+    }
+
+    return res.json({
+      companies: await Company.getAll(search, min_employees, max_employees)
+    });
   } catch (err) {
     return next(err);
   }
