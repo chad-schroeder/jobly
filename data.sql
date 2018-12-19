@@ -8,11 +8,11 @@ CREATE TABLE companies (
   logo_url text
 );
 
-INSERT INTO companies (handle, name)
-    VALUES ('apple', 'Apple');
+INSERT INTO companies (handle, name, num_employees, description)
+    VALUES ('apple', 'Apple', 1, 'This is Apple');
 
-INSERT INTO companies (handle, name)
-    VALUES ('google', 'Google');
+INSERT INTO companies (handle, name, num_employees, description)
+    VALUES ('google', 'Google', 5, 'This is Google');
 
-INSERT INTO companies (handle, name)
-    VALUES ('ibm', 'IBM');
+INSERT INTO companies (handle, name, num_employees, description)
+    VALUES ('ibm', 'IBM', 3, 'This is IBM');
