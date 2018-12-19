@@ -5,28 +5,44 @@ const db = require('../db');
 class Company {
   /** GET / -> get all users. */
 
-  static async getAll(search = '', minEmployees, maxEmployees) {
-    let query = `SELECT handle, name FROM companies`;
-    let searchQuery;
+  static async getAll(search, minEmployees, maxEmployees) {
+    let query = `SELECT handle, name FROM companies `;
+    let queryArr = [];
+    let builtQueryArr = [];
+    let counter = 1;
+
+    if (search || minEmployees || maxEmployees) {
+      query += 'WHERE ';
+    }
 
     if (search) {
       search = `%${search}%`;
-      searchQuery = `WHERE name ILIKE $1`;
+      let searchQuery = `name ILIKE $${counter}`;
+      counter++;
 
-      query += searchQuery;
+      builtQueryArr.push(searchQuery);
+      queryArr.push(search);
     }
 
-    const results = await db.query(query, [search]);
-    return results.rows;
-  }
+    if (minEmployees) {
+      let searchQuery = `num_employees > $${counter}`;
+      counter++;
+      builtQueryArr.push(searchQuery);
+      queryArr.push(minEmployees);
+    }
 
-  static async searchCompany(searchString) {
-    let search = `%${searchString}%`;
-    const results = await db.query(
-      `SELECT handle, name FROM companies WHERE name ILIKE = $1 ORDER BY handle`,
-      [search]
-    );
+    if (maxEmployees) {
+      let searchQuery = `num_employees < $${counter}`;
+      counter++;
+      builtQueryArr.push(searchQuery);
+      queryArr.push(maxEmployees);
+    }
 
+    if (builtQueryArr.length) {
+      query += builtQueryArr.join(' AND ');
+    }
+
+    const results = await db.query(query, queryArr);
     return results.rows;
   }
 }

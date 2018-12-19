@@ -6,9 +6,8 @@ const router = new Router();
 router.get('/', async (req, res, next) => {
   try {
     let { search, min_employees, max_employees } = req.query;
-    console.log(search, min_employees, max_employees);
 
-    if (min_employees > max_employees) {
+    if (Number(min_employees) > Number(max_employees)) {
       let err = new Error();
       err.message = 'min_employees cannot be greater than max_employees';
       err.status = 400;
