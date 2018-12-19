@@ -7,6 +7,11 @@ const sqlForPartialUpdate = require('../helpers/partialUpdate');
 
 const router = new Router();
 
+/** GET /companies
+ * Get all companies, with optional search parameters.
+ *  return {companies: [companyData, ...]}
+ * */
+
 router.get('/', async (req, res, next) => {
   try {
     let { search, min_employees, max_employees } = req.query;
@@ -15,7 +20,7 @@ router.get('/', async (req, res, next) => {
       let err = new Error();
       err.message = 'min_employees cannot be greater than max_employees';
       err.status = 400;
-      return next();
+      return next(err);
     }
 
     return res.json({
@@ -25,6 +30,11 @@ router.get('/', async (req, res, next) => {
     return next(err);
   }
 });
+
+/** POST /companies
+ * Add a company:
+ *  return {company: companyData}
+ */
 
 router.post('/', async (req, res, next) => {
   // verify correct schema
@@ -58,6 +68,11 @@ router.post('/', async (req, res, next) => {
   }
 });
 
+/** GET /companies/[handle]
+ * Get a company:
+ *   return {company: companyData}
+ */
+
 router.get('/:handle', async (req, res, next) => {
   try {
     let handle = req.params.handle;
@@ -69,6 +84,11 @@ router.get('/:handle', async (req, res, next) => {
     return next(err);
   }
 });
+
+/** PATCH /companies/[handle]
+ * Update a company:
+ *   return {company: companyData}
+ */
 
 router.patch('/:handle', async (req, res, next) => {
   try {
@@ -102,6 +122,11 @@ router.patch('/:handle', async (req, res, next) => {
     return next(err);
   }
 });
+
+/** DELETE /companies/[handle]
+ * Delete a company
+ *  return {message: "Company deleted"}
+ */
 
 router.delete('/:handle', async (req, res, next) => {
   try {
