@@ -1,6 +1,8 @@
 /** Express app for jobly. */
 
 const express = require('express');
+const { validate } = require('jsonschema');
+
 const app = express();
 
 app.use(express.json());
