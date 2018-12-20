@@ -105,17 +105,7 @@ router.patch('/:handle', async (req, res, next) => {
       return next(error);
     }
 
-    let handle = req.params.handle;
-
-    //table, items, key, id
-    let updatedCompany = await sqlForPartialUpdate(
-      'companies',
-      req.body,
-      'handle',
-      handle
-    );
-
-    let company = await Company.getCompany(handle);
+    let company = await Company.updateCompany(req.params.handle, req.body);
 
     return res.json({ company });
   } catch (err) {

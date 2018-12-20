@@ -112,6 +112,22 @@ describe('POST /companies', async () => {
   test('Create a new company', async () => {});
 });
 
+describe('PATCH /companies/:handle', async () => {
+  test('Update a company', async () => {
+    const response = await request(app)
+      .patch('/companies/google')
+      .send({});
+    expect(response.body).toEqual();
+  });
+});
+
+describe('DELETE /companies/:handle', async () => {
+  test('Delete a company', async () => {
+    const response = await request(app).delete('/companies/apple');
+    expect(response.body).toEqual({ message: 'Company deleted' });
+  });
+});
+
 afterEach(async () => {
   // delete any entries
   await db.query(`DELETE FROM companies`);

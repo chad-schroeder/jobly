@@ -1,8 +1,13 @@
 /** User class for message.ly */
 
 const db = require('../db');
+const sqlForPartialUpdate = require('../helpers/partialUpdate');
 
 class Company {
+  /** Get all companies
+   *    returns { companies: companyData }
+   */
+
   static async getAll(search, minEmployees, maxEmployees) {
     let query = `SELECT handle, name FROM companies `;
     let queryArr = [];
@@ -75,6 +80,18 @@ class Company {
       [handle]
     );
 
+    return result.rows[0];
+  }
+
+  static async updateCompany(handle, body) {
+    let queryObj = await sqlForPartialUpdate(
+      'companies',
+      body,
+      'handle',
+      handle
+    );
+
+    let result = await db.query(queryObj.query, queryObj.values);
     return result.rows[0];
   }
 
