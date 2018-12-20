@@ -66,7 +66,7 @@ describe('Get /companies', async () => {
     expect(response.body.companies[0].handle).toEqual('google');
     expect(response.body.companies[1].handle).toEqual('apple');
   });
-  test('Get companies with a name like "goog', async () => {
+  test('Get companies with a name like "goog"', async () => {
     const response = await request(app).get('/companies?search=goog');
     expect(response.status).toBe(200);
     expect(response.body.companies[0].handle).toEqual('google');
@@ -169,6 +169,7 @@ describe('PATCH /companies/:handle', async () => {
 describe('DELETE /companies/:handle', async () => {
   test('Delete a company', async () => {
     const response = await request(app).delete('/companies/apple');
+    expect(response.status).toBe(200);
     expect(response.body).toEqual({ message: 'Company deleted' });
   });
 });
