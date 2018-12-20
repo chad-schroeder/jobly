@@ -48,4 +48,23 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
+router.patch('/:id', async (req, res, next) => {
+  try {
+    const job = await Job.updateJob(req.params.id, req.body);
+
+    return res.json({ job });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.delete('/:id', async (req, res, next) => {
+  try {
+    await Job.deleteJob(req.params.id);
+    return res.json({ message: 'Job deleted' });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;

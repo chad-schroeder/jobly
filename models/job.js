@@ -95,6 +95,18 @@ class Job {
       }
     };
   }
+
+  static async updateJob(id, body) {
+    let queryObj = await sqlForPartialUpdate('jobs', body, 'id', id);
+
+    let result = await db.query(queryObj.query, queryObj.values);
+    return result.rows[0];
+  }
+
+  static async deleteJob(id) {
+    let result = await db.query(`DELETE FROM jobs WHERE id = $1`, [id]);
+    return result.rows[0];
+  }
 }
 
 module.exports = Job;
