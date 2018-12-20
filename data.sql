@@ -1,5 +1,6 @@
 DROP TABLE IF EXISTS jobs;
 DROP TABLE IF EXISTS companies;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE companies
 (
@@ -53,7 +54,8 @@ INSERT INTO jobs
 VALUES
     ('third job', 1000, 0.8, 'apple');
 
-CREATE TABLE users (
+CREATE TABLE users
+(
     username text PRIMARY KEY,
     password text NOT NULL,
     first_name text NOT NULL,
@@ -64,11 +66,11 @@ CREATE TABLE users (
 );
 
 INSERT INTO users
-    (username, password, first_name, last_name, email, photo_url, is_admin) 
-VALUES 
+    (username, password, first_name, last_name, email, photo_url, is_admin)
+VALUES
     ('alpha', 'alpha', 'alpha', 'myers', 'alpha@alpha.com', '', TRUE);
-    
+
 INSERT INTO users
-    (username, password, first_name, last_name, email) 
-VALUES 
+    (username, password, first_name, last_name, email)
+VALUES
     ('beta', 'beta', 'beta', 'fish', 'beta@beta.com');
