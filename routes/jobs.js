@@ -24,6 +24,11 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+/** POST /jobs
+ * Add a job:
+ *  return {job: jobData}
+ */
+
 router.post('/', async (req, res, next) => {
   try {
     let { title, salary, equity, company_handle } = req.body;
@@ -35,6 +40,11 @@ router.post('/', async (req, res, next) => {
     return next(err);
   }
 });
+
+/** GET /job/[id]
+ * Get a job:
+ *   return {job: jobData, companyData}
+ */
 
 router.get('/:id', async (req, res, next) => {
   try {
@@ -48,6 +58,11 @@ router.get('/:id', async (req, res, next) => {
   }
 });
 
+/** PATCH /jobs/[id]
+ * Update a job:
+ *   return {job: jobData}
+ */
+
 router.patch('/:id', async (req, res, next) => {
   try {
     const job = await Job.updateJob(req.params.id, req.body);
@@ -57,6 +72,11 @@ router.patch('/:id', async (req, res, next) => {
     return next(err);
   }
 });
+
+/** DELETE /jobs/[id]
+ * Delete a job
+ *  return {message: "Job deleted"}
+ */
 
 router.delete('/:id', async (req, res, next) => {
   try {
