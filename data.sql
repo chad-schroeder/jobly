@@ -52,3 +52,23 @@ INSERT INTO jobs
     (title, salary, equity, company_handle)
 VALUES
     ('third job', 1000, 0.8, 'apple');
+
+CREATE TABLE users (
+    username text PRIMARY KEY,
+    password text NOT NULL,
+    first_name text NOT NULL,
+    last_name text NOT NULL,
+    email text NOT NULL UNIQUE,
+    photo_url text,
+    is_admin boolean NOT NULL DEFAULT FALSE
+);
+
+INSERT INTO users
+    (username, password, first_name, last_name, email, photo_url, is_admin) 
+VALUES 
+    ('alpha', 'alpha', 'alpha', 'myers', 'alpha@alpha.com', '', TRUE);
+    
+INSERT INTO users
+    (username, password, first_name, last_name, email) 
+VALUES 
+    ('beta', 'beta', 'beta', 'fish', 'beta@beta.com');
