@@ -109,7 +109,49 @@ describe('Get /companies', async () => {
 });
 
 describe('POST /companies', async () => {
-  test('Create a new company', async () => {});
+  test('Create a new company with correct data', async () => {
+    const response = await request(app)
+      .post('/companies')
+      .send({
+        handle: 'uber',
+        name: 'Uber',
+        num_employees: 8000,
+        description: 'This is Uber',
+        logo_url: ''
+      });
+    expect(response.status).toBe(200);
+    expect(response.body.company.handle).toEqual('uber');
+  });
+
+  test('Create a new company with incorrect data', async () => {
+    const response = await request(app)
+      .post('/companies')
+      .send({
+        handle: '',
+        name: 'Uber',
+        num_employees: 8000,
+        description: 'This is Uber',
+        logo_url: ''
+      });
+    expect(response.error.status).toBe(400);
+    expect(response.body.message).toEqual([
+      'instance.handle does not meet minimum length of 1'
+    ]);
+  });
+});
+
+describe('GET /companies/:handle', async () => {
+  test('Get a company by correct handle', async () => {
+    const response = await request(app).get('/companies/google');
+    expect(response.status).toBe(200);
+    expect(response.body.company.handle).toEqual('google');
+  });
+
+  test('Get a company by incorrect handle', async () => {
+    const response = await request(app).get('/companies/abcdef');
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({});
+  });
 });
 
 describe('PATCH /companies/:handle', async () => {

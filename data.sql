@@ -16,3 +16,12 @@ INSERT INTO companies (handle, name, num_employees, description)
 
 INSERT INTO companies (handle, name, num_employees, description)
     VALUES ('ibm', 'IBM', 3, 'This is IBM');
+
+
+CREATE TABLE jobs (
+    id int PRIMARY KEY AUTO_INCREMENT,
+    title text NOT NULL,
+    salary float NOT NULL,
+    equity float NOT NULL,
+
+)
