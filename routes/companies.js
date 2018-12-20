@@ -52,6 +52,16 @@ router.post('/', async (req, res, next) => {
 
   const { handle, name, num_employees, description, logo_url } = req.body;
   try {
+    let checkExisting = await Company.getCompany(handle);
+
+    if (checkExisting) {
+      let error = new Error();
+      error.status = 400;
+      error.message =
+        'The company handle already exists, choose a different one!';
+      return next(error);
+    }
+
     let company = await Company.addCompany(
       handle,
       name,

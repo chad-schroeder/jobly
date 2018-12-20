@@ -77,7 +77,9 @@ class Job {
     let job = result.rows[0];
 
     if (!job) {
-      throw new Error(`No such job: ${id}`);
+      let error = new Error(`No such job: ${id}`);
+      error.status = 400;
+      throw error;
     }
 
     return {
