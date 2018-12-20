@@ -2,7 +2,6 @@ process.env.NODE_ENV = 'test';
 const db = require('../../db');
 const app = require('../../app');
 const Job = require('../../models/job');
-const Company = require('../../models/company');
 const request = require('supertest');
 
 let job;
@@ -33,31 +32,38 @@ describe('Tests for GET /jobs', async () => {
   test('Get jobs with a title like "test"', async () => {
     const response = await request(app).get('/jobs?search=test');
     expect(response.status).toBe(200);
+    expect(response.body.jobs).toHaveLength(1);
     expect(response.body.jobs[0].title).toEqual('test job');
   });
 
   test('Should not find a job with a title like "abcd', async () => {
-    const response = await request(app).get('/jobs?search=abcd');
+    const response = await request(app)
+      .get('/jobs')
+      .query({ search: 'abcd' });
     expect(response.status).toBe(200);
     expect(response.body.jobs).toEqual([]);
   });
 
   test('Get jobs with a title like "test" and min_salary >= 100', async () => {
-    const response = await request(app).get('/jobs?search=test&min_salary=100');
+    const response = await request(app)
+      .get('/jobs')
+      .query({ search: 'test', min_salary: 100 });
     expect(response.status).toBe(200);
     expect(response.body.jobs[0].title).toEqual('test job');
   });
 
   test('Get jobs with a title like "test" and min_equity >= 0.5', async () => {
-    const response = await request(app).get('/jobs?search=test&min_equity=0.5');
+    const response = await request(app)
+      .get('/jobs')
+      .query({ search: 'test', min_equity: 0.5 });
     expect(response.status).toBe(200);
     expect(response.body.jobs[0].title).toEqual('test job');
   });
 
   test('Get jobs with a title like "test" and min_salary >= 100 and min_equity >= 0.5', async () => {
-    const response = await request(app).get(
-      '/jobs?search=test&min_salary=99&min_equity=0.5'
-    );
+    const response = await request(app)
+      .get('/jobs')
+      .query({ search: 'test', min_salary: 99, min_equity: 0.5 });
     expect(response.status).toBe(200);
     expect(response.body.jobs[0].title).toEqual('test job');
   });
