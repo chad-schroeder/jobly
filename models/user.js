@@ -1,7 +1,7 @@
 const db = require('../db');
 const sqlForPartialUpdate = require('../helpers/partialUpdate');
 
-class Company {
+class User {
   static async addUser(
     username,
     password,
@@ -17,7 +17,7 @@ class Company {
         users 
         (username, password, first_name, last_name, email, photo_url, is_admin)
       VALUES 
-        ($1, $2, $3, $4, $5)
+        ($1, $2, $3, $4, $5, $6, $7)
       RETURNING 
         *
     `,
@@ -116,3 +116,5 @@ class Company {
     return result.rows[0];
   }
 }
+
+module.exports = User;

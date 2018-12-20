@@ -1,8 +1,8 @@
 const Router = require('express').Router;
 const User = require('../models/user');
 const { validate } = require('jsonschema');
-const createUserSchema = require('../schemas/createUser.json');
-const updateUserSchema = require('../schemas/updateUser.json');
+// const createUserSchema = require('../schemas/createUser.json');
+// const updateUserSchema = require('../schemas/updateUser.json');
 
 const router = new Router();
 
@@ -27,28 +27,48 @@ router.get('/', async (req, res, next) => {
 router.post('/', async (req, res, next) => {
   try {
     // verify correct schema
-    let validationResult = validate(req.body, createUserSchema);
+    // let validationResult = validate(req.body, createUserSchema);
 
-    if (!validationResult.valid) {
-      // pass validation errors to error handler
-      //  (the "stack" key is generally the most useful)
-      let message = validationResult.errors.map(error => error.stack);
-      let error = new Error(message);
-      error.status = 400;
-      error.message = message;
-      return next(error);
-    }
+    // if (!validationResult.valid) {
+    //   // pass validation errors to error handler
+    //   //  (the "stack" key is generally the most useful)
+    //   let message = validationResult.errors.map(error => error.stack);
+    //   let error = new Error(message);
+    //   error.status = 400;
+    //   error.message = message;
+    //   return next(error);
+    // }
 
-    const id = req.query.id;
-    const user = await User.getUser(id);
+    const {
+      username,
+      password,
+      first_name,
+      last_name,
+      email,
+      photo_url,
+      is_admin
+    } = req.body;
+
+    const user = await User.getUser(username);
+    console.log(user);
 
     if (!user) {
-      // error
+      let error = new Error(`User already exists: ${user}`);
+      error.status = 404;
+      throw error;
     }
 
-    const result = await User.addUser(id);
+    const result = await User.addUser(
+      username,
+      password,
+      first_name,
+      last_name,
+      email,
+      photo_url,
+      is_admin
+    );
 
-    return res.json({ result });
+    return res.json({ user: result });
   } catch (err) {
     return next(err);
   }
@@ -56,7 +76,7 @@ router.post('/', async (req, res, next) => {
 
 /** GET /User/[id]
  * Get a User:
- *   return {User: UserData, companyData}
+ *   return {User: UserData, userData}
  */
 
 router.get('/:id', async (req, res, next) => {
@@ -79,17 +99,17 @@ router.get('/:id', async (req, res, next) => {
 router.patch('/:id', async (req, res, next) => {
   try {
     // verify correct schema
-    let validationResult = validate(req.body, updateUserSchema);
+    // let validationResult = validate(req.body, updateUserSchema);
 
-    if (!validationResult.valid) {
-      // pass validation errors to error handler
-      //  (the "stack" key is generally the most useful)
-      let message = validationResult.errors.map(error => error.stack);
-      let error = new Error(message);
-      error.status = 400;
-      error.message = message;
-      return next(error);
-    }
+    // if (!validationResult.valid) {
+    //   // pass validation errors to error handler
+    //   //  (the "stack" key is generally the most useful)
+    //   let message = validationResult.errors.map(error => error.stack);
+    //   let error = new Error(message);
+    //   error.status = 400;
+    //   error.message = message;
+    //   return next(error);
+    // }
 
     const User = await User.updateUser(req.params.id, req.body);
 
