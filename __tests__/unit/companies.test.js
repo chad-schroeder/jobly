@@ -116,8 +116,11 @@ describe('PATCH /companies/:handle', async () => {
   test('Update a company', async () => {
     const response = await request(app)
       .patch('/companies/google')
-      .send({});
-    expect(response.body).toEqual();
+      .send({
+        num_employees: 1000
+      });
+    expect(response.statusCode).toBe(200);
+    expect(response.body.company.num_employees).toEqual(1000);
   });
 });
 
