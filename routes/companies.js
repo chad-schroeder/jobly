@@ -3,7 +3,6 @@ const Company = require('../models/company');
 const { validate } = require('jsonschema');
 const companySchema = require('../schemas/createCompany.json');
 const updateCompanySchema = require('../schemas/updateCompany.json');
-const sqlForPartialUpdate = require('../helpers/partialUpdate');
 
 const router = new Router();
 
@@ -132,7 +131,7 @@ router.delete('/:handle', async (req, res, next) => {
   try {
     let handle = req.params.handle;
 
-    let result = await Company.deleteCompany(handle);
+    await Company.deleteCompany(handle);
 
     return res.json({ message: 'Company deleted' });
   } catch (err) {

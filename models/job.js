@@ -78,7 +78,7 @@ class Job {
 
     if (!job) {
       let error = new Error(`No such job: ${id}`);
-      error.status = 400;
+      error.status = 404;
       throw error;
     }
 
@@ -102,11 +102,29 @@ class Job {
     let queryObj = await sqlForPartialUpdate('jobs', body, 'id', id);
 
     let result = await db.query(queryObj.query, queryObj.values);
+
+    let job = result.rows[0];
+
+    if (!job) {
+      let error = new Error(`No such job: ${id}`);
+      error.status = 404;
+      throw error;
+    }
+
     return result.rows[0];
   }
 
   static async deleteJob(id) {
     let result = await db.query(`DELETE FROM jobs WHERE id = $1`, [id]);
+
+    let job = result.rows[0];
+
+    if (!job) {
+      let error = new Error(`No such job: ${id}`);
+      error.status = 404;
+      throw error;
+    }
+
     return result.rows[0];
   }
 }

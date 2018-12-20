@@ -78,6 +78,14 @@ class Company {
       [handle]
     );
 
+    let company = result.rows[0];
+
+    if (!company) {
+      let error = new Error(`No such company: ${handle}`);
+      error.status = 404;
+      throw error;
+    }
+
     return result.rows[0];
   }
 
@@ -90,6 +98,15 @@ class Company {
     );
 
     let result = await db.query(queryObj.query, queryObj.values);
+
+    let company = result.rows[0];
+
+    if (!company) {
+      let error = new Error(`No such company: ${handle}`);
+      error.status = 404;
+      throw error;
+    }
+
     return result.rows[0];
   }
 
@@ -100,9 +117,19 @@ class Company {
         companies
       WHERE
         handle = $1
+      RETURNING
+        *
       `,
       [handle]
     );
+
+    let company = result.rows[0];
+
+    if (!company) {
+      let error = new Error(`No such company: ${handle}`);
+      error.status = 404;
+      throw error;
+    }
 
     return result.rows[0];
   }
