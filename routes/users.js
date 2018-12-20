@@ -25,39 +25,17 @@ router.get('/', async (req, res, next) => {
  */
 
 router.post('/', async (req, res, next) => {
+  const {
+    username,
+    password,
+    first_name,
+    last_name,
+    email,
+    photo_url,
+    is_admin
+  } = req.body;
+
   try {
-    // verify correct schema
-    // let validationResult = validate(req.body, createUserSchema);
-
-    // if (!validationResult.valid) {
-    //   // pass validation errors to error handler
-    //   //  (the "stack" key is generally the most useful)
-    //   let message = validationResult.errors.map(error => error.stack);
-    //   let error = new Error(message);
-    //   error.status = 400;
-    //   error.message = message;
-    //   return next(error);
-    // }
-
-    const {
-      username,
-      password,
-      first_name,
-      last_name,
-      email,
-      photo_url,
-      is_admin
-    } = req.body;
-
-    const user = await User.getUser(username);
-    console.log(user);
-
-    if (!user) {
-      let error = new Error(`User already exists: ${user}`);
-      error.status = 404;
-      throw error;
-    }
-
     const result = await User.addUser(
       username,
       password,

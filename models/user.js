@@ -63,7 +63,7 @@ class User {
     let user = result.rows[0];
 
     if (!user) {
-      let error = new Error(`No such company: ${username}`);
+      let error = new Error(`No such user: ${username}`);
       error.status = 404;
       throw error;
     }
