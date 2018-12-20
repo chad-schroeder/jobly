@@ -1,5 +1,3 @@
-/** User class for message.ly */
-
 const db = require('../db');
 const sqlForPartialUpdate = require('../helpers/partialUpdate');
 

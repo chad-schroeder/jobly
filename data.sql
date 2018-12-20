@@ -28,3 +28,5 @@ CREATE TABLE jobs (
 )
 
 INSERT INTO jobs (title, salary, equity, company_handle) VALUES ('first job', 100, 0.5, 'apple');
+INSERT INTO jobs (title, salary, equity, company_handle) VALUES ('second job', 200, 1, 'apple');
+INSERT INTO jobs (title, salary, equity, company_handle) VALUES ('third job', 1000, 0.8, 'apple');
