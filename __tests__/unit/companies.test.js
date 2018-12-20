@@ -1,5 +1,8 @@
+process.env.NODE_ENV = 'test';
 const db = require('../../db');
+const app = require('../../app');
 const Company = require('../../models/company');
+const request = require('supertest');
 
 let google;
 let apple;
@@ -23,7 +26,8 @@ beforeEach(async () => {
   );
 });
 
-describe('Get / companies', async () => {
+//Test the Company.getAll model
+describe('Companies.getAll', async () => {
   test('Get a list of all companies', async () => {
     let result = await Company.getAll();
     expect(result).toHaveLength(2);
@@ -53,6 +57,59 @@ describe('Get / companies', async () => {
     let result = await Company.getAll('goo', 2000, 6000);
     expect(result[0].name).toEqual('Google');
   });
+});
+
+describe('Get /companies', async () => {
+  test('Get all companies', async () => {
+    const response = await request(app).get('/companies');
+    expect(response.status).toBe(200);
+    expect(response.body.companies[0].handle).toEqual('google');
+    expect(response.body.companies[1].handle).toEqual('apple');
+  });
+  test('Get companies with a name like "goog', async () => {
+    const response = await request(app).get('/companies?search=goog');
+    expect(response.status).toBe(200);
+    expect(response.body.companies[0].handle).toEqual('google');
+  });
+  test('Get companies with a name like "abcd', async () => {
+    const response = await request(app).get('/companies?search=abcd');
+    expect(response.status).toBe(200);
+    expect(response.body.companies).toEqual([]);
+  });
+  test('Get companies with a name like "goog" and num_employees >= 5', async () => {
+    const response = await request(app).get(
+      '/companies?search=goog&min_employees=4000'
+    );
+    expect(response.status).toBe(200);
+    expect(response.body.companies[0].handle).toEqual('google');
+  });
+  test('Get companies with a name like "goog" and num_employees >= 10000', async () => {
+    const response = await request(app).get(
+      '/companies?search=goog&min_employees=10000'
+    );
+    expect(response.status).toBe(200);
+    expect(response.body.companies).toEqual([]);
+  });
+  test('Get companies with a name like "goog" and num_employees >= 4000 and num_employees <= 5000 ', async () => {
+    const response = await request(app).get(
+      '/companies?search=goog&min_employees=4000&max_employees=5000'
+    );
+    expect(response.status).toBe(200);
+    expect(response.body.companies[0].handle).toEqual('google');
+  });
+  test('Get companies with a name like "goog" and num_employees >= 10000 and num_employees <= 5000 ', async () => {
+    const response = await request(app).get(
+      '/companies?search=goog&min_employees=10000&max_employees=5000'
+    );
+    expect(response.status).toBe(400);
+    expect(response.body.error.message).toEqual(
+      'min_employees cannot be greater than max_employees'
+    );
+  });
+});
+
+describe('POST /companies', async () => {
+  test('Create a new company', async () => {});
 });
 
 afterEach(async () => {
