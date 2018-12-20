@@ -1,9 +1,8 @@
 const Router = require('express').Router;
 const Job = require('../models/job');
 const { validate } = require('jsonschema');
-// const companySchema = require('../schemas/createCompany.json');
-// const updateCompanySchema = require('../schemas/updateCompany.json');
-const sqlForPartialUpdate = require('../helpers/partialUpdate');
+const createJobSchema = require('../schemas/createJob.json');
+const updateJobSchema = require('../schemas/updateJob.json');
 
 const router = new Router();
 
@@ -31,6 +30,19 @@ router.get('/', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
   try {
+    // verify correct schema
+    let validationResult = validate(req.body, createJobSchema);
+
+    if (!validationResult.valid) {
+      // pass validation errors to error handler
+      //  (the "stack" key is generally the most useful)
+      let message = validationResult.errors.map(error => error.stack);
+      let error = new Error(message);
+      error.status = 400;
+      error.message = message;
+      return next(error);
+    }
+
     let { title, salary, equity, company_handle } = req.body;
 
     let job = await Job.addJob(title, salary, equity, company_handle);
@@ -65,6 +77,18 @@ router.get('/:id', async (req, res, next) => {
 
 router.patch('/:id', async (req, res, next) => {
   try {
+    // verify correct schema
+    let validationResult = validate(req.body, updateJobSchema);
+
+    if (!validationResult.valid) {
+      // pass validation errors to error handler
+      //  (the "stack" key is generally the most useful)
+      let message = validationResult.errors.map(error => error.stack);
+      let error = new Error(message);
+      error.status = 400;
+      error.message = message;
+      return next(error);
+    }
     const job = await Job.updateJob(req.params.id, req.body);
 
     return res.json({ job });

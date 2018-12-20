@@ -4,6 +4,7 @@
   "$id": "http://example.com/root.json",
   "type": "object",
   "title": "The Root Schema",
+  "minProperties": 1,
   "properties": {
     "name": {
       "$id": "#/properties/name",
@@ -40,5 +41,6 @@
       ],
       "pattern": "^(.*)$"
     }
-  }
+  },
+  "additionalProperties": false
 }
