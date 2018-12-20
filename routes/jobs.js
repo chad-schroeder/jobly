@@ -24,4 +24,28 @@ router.get('/', async (req, res, next) => {
   }
 });
 
+router.post('/', async (req, res, next) => {
+  try {
+    let { title, salary, equity, company_handle } = req.body;
+
+    let job = await Job.addJob(title, salary, equity, company_handle);
+
+    return res.json({ job });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.get('/:id', async (req, res, next) => {
+  try {
+    let id = req.params.id;
+
+    let job = await Job.getJob(id);
+
+    return res.json({ job });
+  } catch (err) {
+    return next(err);
+  }
+});
+
 module.exports = router;

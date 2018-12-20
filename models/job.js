@@ -44,6 +44,57 @@ class Job {
     const results = await db.query(query, queryArr);
     return results.rows;
   }
+
+  static async addJob(title, salary, equity, company_handle) {
+    let result = await db.query(
+      `
+      INSERT INTO jobs(title, salary, equity, company_handle)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *
+    `,
+      [title, salary, equity, company_handle]
+    );
+    return result.rows[0];
+  }
+
+  static async getJob(id) {
+    let result = await db.query(
+      `
+      SELECT
+        *
+      FROM
+        jobs j
+      JOIN
+        companies c
+      ON
+        c.handle = j.company_handle
+      WHERE
+        id = $1
+    `,
+      [id]
+    );
+
+    let job = result.rows[0];
+
+    if (!job) {
+      throw new Error(`No such job: ${id}`);
+    }
+
+    return {
+      id: job.id,
+      title: job.title,
+      salary: job.salary,
+      equity: job.equity,
+      date_posted: job.date_posted,
+      company: {
+        handle: job.company_handle,
+        name: job.name,
+        num_employees: job.num_employees,
+        description: job.description,
+        logo_url: job.logo_url
+      }
+    };
+  }
 }
 
 module.exports = Job;
