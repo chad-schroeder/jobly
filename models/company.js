@@ -44,6 +44,15 @@ class Company {
     }
 
     const results = await db.query(query, queryArr);
+
+    let company = results.rows[0];
+
+    if (!company) {
+      let error = new Error(`Your filters did not match any company.`);
+      error.status = 404;
+      throw error;
+    }
+
     return results.rows;
   }
 
