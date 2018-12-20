@@ -78,6 +78,28 @@ describe('Tests for GET /jobs/:id', async () => {
       'invalid input syntax for integer: "asdf"'
     );
   });
+
+  describe('PATCH /jobs/:id', async () => {
+    test('Update a job', async () => {
+      const id = job.rows[0].id;
+      const response = await request(app)
+        .patch(`/jobs/${id}`)
+        .send({
+          title: 'updated job'
+        });
+      expect(response.status).toBe(200);
+      expect(response.body.job.title).toEqual('updated job');
+    });
+  });
+});
+
+describe('DELETE /jobs/:id', async () => {
+  test('Delete a job', async () => {
+    const id = job.rows[0].id;
+    const response = await request(app).delete(`/jobs/${id}`);
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ message: 'Job deleted' });
+  });
 });
 
 afterEach(async () => {
