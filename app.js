@@ -1,14 +1,15 @@
 /** Express app for jobly. */
 
 const express = require('express');
-const { validate } = require('jsonschema');
+const jwt = require('jsonwebtoken');
+// const { SECRET_KEY } = require('../config');
 
 const app = express();
-
 app.use(express.json());
 
 /** routes */
 
+const authRoutes = require('./routes/auth');
 const companyRoutes = require('./routes/companies');
 const jobRoutes = require('./routes/jobs');
 const userRoutes = require('./routes/users');
@@ -16,6 +17,7 @@ const userRoutes = require('./routes/users');
 app.use('/companies', companyRoutes);
 app.use('/jobs', jobRoutes);
 app.use('/users', userRoutes);
+app.use('/', authRoutes);
 
 // add logging system
 

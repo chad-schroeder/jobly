@@ -1,5 +1,8 @@
 const Router = require('express').Router;
 const User = require('../models/user');
+const { ensureLoggedIn, ensureCorrectUser } = require('../middleware/auth');
+const jwt = require('jsonwebtoken');
+const { SECRET } = require('../config');
 const { validate } = require('jsonschema');
 const createUserSchema = require('../schemas/createUser.json');
 
@@ -68,7 +71,8 @@ router.post('/', async (req, res, next) => {
       is_admin
     );
 
-    return res.json({ user: result });
+    const token = jwt.sign({ username, is_admin: result.is_admin }, SECRET, {});
+    return res.json({ token });
   } catch (err) {
     return next(err);
   }
@@ -96,7 +100,7 @@ router.get('/:username', async (req, res, next) => {
  *   return {user: userData}
  */
 
-router.patch('/:username', async (req, res, next) => {
+router.patch('/:username', ensureCorrectUser, async (req, res, next) => {
   try {
     // verify correct schema
     // let validationResult = validate(req.body, updateUserSchema);
@@ -110,6 +114,9 @@ router.patch('/:username', async (req, res, next) => {
     //   error.message = message;
     //   return next(error);
     // }
+
+    // remove token from params
+    delete req.body.token;
     const user = await User.updateUser(req.params.username, req.body);
 
     return res.json({ user });
@@ -123,7 +130,7 @@ router.patch('/:username', async (req, res, next) => {
  *  return {message: "user deleted"}
  */
 
-router.delete('/:username', async (req, res, next) => {
+router.delete('/:username', ensureCorrectUser, async (req, res, next) => {
   try {
     await User.deleteUser(req.params.username);
     return res.json({ message: 'user deleted' });

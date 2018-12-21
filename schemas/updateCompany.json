@@ -41,6 +41,5 @@
       ],
       "pattern": "^(.*)$"
     }
-  },
-  "additionalProperties": false
+  }
 }

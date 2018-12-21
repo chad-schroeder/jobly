@@ -40,6 +40,5 @@
       "minLength": 1,
       "pattern": "^(.*)$"
     }
-  },
-  "additionalProperties": false
+  }
 }

@@ -1,7 +1,22 @@
 const db = require('../db');
 const sqlForPartialUpdate = require('../helpers/partialUpdate');
+const bcrypt = require('bcrypt');
+const { BCRYPT_WORK_ROUNDS } = require('../config');
 
 class User {
+  /** Authenticate: is this username/password valid? Returns boolean. */
+
+  static async authenticate(username, password) {
+    const result = await db.query(
+      'SELECT password, is_admin FROM users WHERE username = $1',
+      [username]
+    );
+    const user = result.rows[0];
+    if (user && (await bcrypt.compare(password, user.password))) {
+      return user;
+    }
+  }
+
   static async addUser(
     username,
     password,
@@ -11,6 +26,8 @@ class User {
     photo_url,
     is_admin
   ) {
+    password = await bcrypt.hash(password, BCRYPT_WORK_ROUNDS);
+
     let result = await db.query(
       `
       INSERT INTO 

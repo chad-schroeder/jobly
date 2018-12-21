@@ -47,6 +47,5 @@
       "examples": [""],
       "pattern": "^(.*)$"
     }
-  },
-  "additionalProperties": false
+  }
 }

@@ -1,5 +1,10 @@
 const Router = require('express').Router;
 const Job = require('../models/job');
+const {
+  ensureLoggedIn,
+  ensureAdminUser,
+  ensureCorrectUser
+} = require('../middleware/auth');
 const { validate } = require('jsonschema');
 const createJobSchema = require('../schemas/createJob.json');
 const updateJobSchema = require('../schemas/updateJob.json');
@@ -11,9 +16,9 @@ const router = new Router();
  *  return {jobs: [jobData, ...]}
  * */
 
-router.get('/', async (req, res, next) => {
+router.get('/', ensureLoggedIn, async (req, res, next) => {
   try {
-    let { search, min_salary, min_equity } = req.query;
+    const { search, min_salary, min_equity } = req.query;
 
     return res.json({
       jobs: await Job.getAll(search, min_salary, min_equity)
@@ -28,7 +33,7 @@ router.get('/', async (req, res, next) => {
  *  return {job: jobData}
  */
 
-router.post('/', async (req, res, next) => {
+router.post('/', ensureAdminUser, async (req, res, next) => {
   try {
     // verify correct schema
     let validationResult = validate(req.body, createJobSchema);
@@ -43,9 +48,8 @@ router.post('/', async (req, res, next) => {
       return next(error);
     }
 
-    let { title, salary, equity, company_handle } = req.body;
-
-    let job = await Job.addJob(title, salary, equity, company_handle);
+    const { title, salary, equity, company_handle } = req.body;
+    const job = await Job.addJob(title, salary, equity, company_handle);
 
     return res.json({ job });
   } catch (err) {
@@ -58,7 +62,7 @@ router.post('/', async (req, res, next) => {
  *   return {job: jobData, companyData}
  */
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', ensureLoggedIn, async (req, res, next) => {
   try {
     let id = req.params.id;
 
@@ -75,7 +79,7 @@ router.get('/:id', async (req, res, next) => {
  *   return {job: jobData}
  */
 
-router.patch('/:id', async (req, res, next) => {
+router.patch('/:id', ensureAdminUser, async (req, res, next) => {
   try {
     // verify correct schema
     let validationResult = validate(req.body, updateJobSchema);
@@ -89,6 +93,9 @@ router.patch('/:id', async (req, res, next) => {
       error.message = message;
       return next(error);
     }
+
+    // remove token from payload
+    delete req.body.token;
     const job = await Job.updateJob(req.params.id, req.body);
 
     return res.json({ job });
@@ -102,7 +109,7 @@ router.patch('/:id', async (req, res, next) => {
  *  return {message: "Job deleted"}
  */
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', ensureAdminUser, async (req, res, next) => {
   try {
     await Job.deleteJob(req.params.id);
     return res.json({ message: 'Job deleted' });

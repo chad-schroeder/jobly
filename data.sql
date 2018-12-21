@@ -64,13 +64,3 @@ CREATE TABLE users
     photo_url text,
     is_admin boolean NOT NULL DEFAULT FALSE
 );
-
-INSERT INTO users
-    (username, password, first_name, last_name, email, photo_url, is_admin)
-VALUES
-    ('alpha', 'alpha', 'alpha', 'myers', 'alpha@alpha.com', '', TRUE);
-
-INSERT INTO users
-    (username, password, first_name, last_name, email)
-VALUES
-    ('bravo', 'bravo', 'bravo', 'Henderson', 'bravo@bravo.com');
