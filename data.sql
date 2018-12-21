@@ -73,4 +73,4 @@ VALUES
 INSERT INTO users
     (username, password, first_name, last_name, email)
 VALUES
-    ('beta', 'beta', 'beta', 'fish', 'beta@beta.com');
+    ('bravo', 'bravo', 'bravo', 'Henderson', 'bravo@bravo.com');
