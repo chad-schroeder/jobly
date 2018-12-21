@@ -1,9 +1,15 @@
 const Router = require('express').Router;
 const Job = require('../models/job');
-const { ensureLoggedIn, ensureAdminUser } = require('../middleware/auth');
+const Application = require('../models/application');
+const {
+  ensureLoggedIn,
+  ensureAdminUser,
+  ensureCorrectUser
+} = require('../middleware/auth');
 const { validate } = require('jsonschema');
 const createJobSchema = require('../schemas/createJob.json');
 const updateJobSchema = require('../schemas/updateJob.json');
+const createApplicationSchema = require('../schemas/createApplication.json');
 
 const router = new Router();
 
@@ -105,6 +111,42 @@ router.delete('/:id', ensureAdminUser, async (req, res, next) => {
   try {
     await Job.deleteJob(req.params.id);
     return res.json({ message: 'Job deleted' });
+  } catch (err) {
+    return next(err);
+  }
+});
+
+router.post('/:id/apply', ensureLoggedIn, async (req, res, next) => {
+  try {
+    // verify correct schema
+    const validationResult = validate(req.body, createApplicationSchema);
+
+    if (!validationResult.valid) {
+      // pass validation errors to error handler
+      //  (the "stack" key is generally the most useful)
+      let message = validationResult.errors.map(error => error.stack);
+      let error = new Error(message);
+      error.status = 400;
+      error.message = message;
+      return next(error);
+    }
+
+    let id = req.params.id;
+
+    let checkExisting = await Job.getJob(id);
+
+    if (!checkExisting) {
+      let error = new Error();
+      error.status = 400;
+      error.message = `The job ${id} does not exist!`;
+      return next(error);
+    }
+
+    let { state } = req.body;
+
+    let application = await Application.addApplication(req.username, id, state);
+
+    return res.json({ message: application });
   } catch (err) {
     return next(err);
   }
