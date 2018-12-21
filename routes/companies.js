@@ -86,9 +86,7 @@ router.post('/', ensureAdminUser, async (req, res, next) => {
 
 router.get('/:handle', ensureLoggedIn, async (req, res, next) => {
   try {
-    let handle = req.params.handle;
-
-    let company = await Company.getCompany(handle);
+    const company = await Company.getCompany(req.params.handle);
 
     return res.json({ company });
   } catch (err) {
@@ -104,7 +102,7 @@ router.get('/:handle', ensureLoggedIn, async (req, res, next) => {
 router.patch('/:handle', ensureAdminUser, async (req, res, next) => {
   try {
     // verify correct schema
-    let validationResult = validate(req.body, updateCompanySchema);
+    const validationResult = validate(req.body, updateCompanySchema);
 
     if (!validationResult.valid) {
       // pass validation errors to error handler
@@ -116,9 +114,8 @@ router.patch('/:handle', ensureAdminUser, async (req, res, next) => {
       return next(error);
     }
 
-    // remove token from payload
-    delete req.body.token;
-    const company = await Company.updateCompany(req.params.handle, req.body);
+    const { token, ...payload } = req.body;
+    const company = await Company.updateCompany(req.params.handle, payload);
 
     return res.json({ company });
   } catch (err) {
@@ -133,8 +130,7 @@ router.patch('/:handle', ensureAdminUser, async (req, res, next) => {
 
 router.delete('/:handle', ensureAdminUser, async (req, res, next) => {
   try {
-    let handle = req.params.handle;
-    await Company.deleteCompany(handle);
+    await Company.deleteCompany(req.params.handle);
 
     return res.json({ message: 'Company deleted' });
   } catch (err) {

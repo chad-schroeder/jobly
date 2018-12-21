@@ -1,10 +1,6 @@
 const Router = require('express').Router;
 const Job = require('../models/job');
-const {
-  ensureLoggedIn,
-  ensureAdminUser,
-  ensureCorrectUser
-} = require('../middleware/auth');
+const { ensureLoggedIn, ensureAdminUser } = require('../middleware/auth');
 const { validate } = require('jsonschema');
 const createJobSchema = require('../schemas/createJob.json');
 const updateJobSchema = require('../schemas/updateJob.json');
@@ -36,7 +32,7 @@ router.get('/', ensureLoggedIn, async (req, res, next) => {
 router.post('/', ensureAdminUser, async (req, res, next) => {
   try {
     // verify correct schema
-    let validationResult = validate(req.body, createJobSchema);
+    const validationResult = validate(req.body, createJobSchema);
 
     if (!validationResult.valid) {
       // pass validation errors to error handler
@@ -64,9 +60,7 @@ router.post('/', ensureAdminUser, async (req, res, next) => {
 
 router.get('/:id', ensureLoggedIn, async (req, res, next) => {
   try {
-    let id = req.params.id;
-
-    let job = await Job.getJob(id);
+    const job = await Job.getJob(req.params.id);
 
     return res.json({ job });
   } catch (err) {
@@ -82,11 +76,10 @@ router.get('/:id', ensureLoggedIn, async (req, res, next) => {
 router.patch('/:id', ensureAdminUser, async (req, res, next) => {
   try {
     // verify correct schema
-    let validationResult = validate(req.body, updateJobSchema);
+    const validationResult = validate(req.body, updateJobSchema);
 
     if (!validationResult.valid) {
       // pass validation errors to error handler
-      //  (the "stack" key is generally the most useful)
       let message = validationResult.errors.map(error => error.stack);
       let error = new Error(message);
       error.status = 400;
@@ -94,9 +87,8 @@ router.patch('/:id', ensureAdminUser, async (req, res, next) => {
       return next(error);
     }
 
-    // remove token from payload
-    delete req.body.token;
-    const job = await Job.updateJob(req.params.id, req.body);
+    const { token, ...payload } = req.body;
+    const job = await Job.updateJob(req.params.id, payload);
 
     return res.json({ job });
   } catch (err) {

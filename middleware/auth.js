@@ -9,6 +9,7 @@ function ensureLoggedIn(req, res, next) {
   try {
     const token = req.body.token || req.query.token;
     const { username, is_admin } = jwt.verify(token, SECRET);
+
     // put username and is_admin on request as a convenience for routes
     req.username = username;
     req.is_admin = is_admin;
@@ -24,6 +25,7 @@ function ensureCorrectUser(req, res, next) {
   try {
     const token = req.body.token || req.query.token;
     const { username, is_admin } = jwt.verify(token, SECRET);
+
     if (username === req.params.username) {
       // put username on request as a convenience for routes
       req.username = username;
