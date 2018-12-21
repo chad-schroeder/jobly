@@ -51,7 +51,7 @@ router.post('/', async (req, res, next) => {
 
   const { handle, name, num_employees, description, logo_url } = req.body;
   try {
-    let checkExisting = await Company.getCompany(handle);
+    let checkExisting = await Company.getCompany(handle, true);
 
     if (checkExisting) {
       let error = new Error();

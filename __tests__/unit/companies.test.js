@@ -123,8 +123,8 @@ describe('POST /companies', async () => {
         description: 'This is Uber',
         logo_url: ''
       });
-    expect(response.status).toBe(404);
-    expect(response.body.message).toEqual('No such company: uber');
+    expect(response.status).toBe(200);
+    expect(response.body.company.handle).toEqual('uber');
   });
 
   test('Create a new company with incorrect data', async () => {

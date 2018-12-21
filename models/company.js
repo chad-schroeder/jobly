@@ -74,7 +74,7 @@ class Company {
     return result.rows[0];
   }
 
-  static async getCompany(handle) {
+  static async getCompany(handle, register = false) {
     let result = await db.query(
       `
       SELECT
@@ -89,7 +89,7 @@ class Company {
 
     let company = result.rows[0];
 
-    if (!company) {
+    if (!company && !register) {
       let error = new Error(`No such company: ${handle}`);
       error.status = 404;
       throw error;

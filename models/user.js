@@ -44,10 +44,10 @@ class User {
       throw error;
     }
 
-    return results.rows[0];
+    return results.rows;
   }
 
-  static async getUser(username) {
+  static async getUser(username, register = false) {
     let result = await db.query(
       `
       SELECT
@@ -62,7 +62,7 @@ class User {
 
     let user = result.rows[0];
 
-    if (!user) {
+    if (!user && !register) {
       let error = new Error(`No such user: ${username}`);
       error.status = 404;
       throw error;
