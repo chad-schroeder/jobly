@@ -67,6 +67,14 @@
       "title": "The Is_admin Schema",
       "default": false,
       "examples": [false]
+    },
+    "token": {
+      "$id": "#/properties/token",
+      "type": "string",
+      "title": "The Token Schema",
+      "default": "",
+      "examples": ["jhsdfjhsdjfhsdfjghsdfghgsdhgjkldfjghdjsgfhjgdjfhgjksdhfjk"],
+      "pattern": "^(.*)$"
     }
   },
   "additionalProperties": false

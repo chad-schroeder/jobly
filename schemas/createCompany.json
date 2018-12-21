@@ -46,6 +46,15 @@
       "default": "",
       "examples": [""],
       "pattern": "^(.*)$"
+    },
+    "token": {
+      "$id": "#/properties/token",
+      "type": "string",
+      "title": "The Token Schema",
+      "default": "",
+      "examples": ["jhsdfjhsdjfhsdfjghsdfghgsdhgjkldfjghdjsgfhjgdjfhgjksdhfjk"],
+      "pattern": "^(.*)$"
     }
-  }
+  },
+  "additionalProperties": false
 }

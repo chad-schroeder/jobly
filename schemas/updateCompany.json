@@ -40,6 +40,15 @@
         "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
       ],
       "pattern": "^(.*)$"
+    },
+    "token": {
+      "$id": "#/properties/token",
+      "type": "string",
+      "title": "The Token Schema",
+      "default": "",
+      "examples": ["jhsdfjhsdjfhsdfjghsdfghgsdhgjkldfjghdjsgfhjgdjfhgjksdhfjk"],
+      "pattern": "^(.*)$"
     }
-  }
+  },
+  "additionalProperties": false
 }
