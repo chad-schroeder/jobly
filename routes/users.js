@@ -1,6 +1,6 @@
 const Router = require('express').Router;
 const User = require('../models/user');
-const { ensureLoggedIn, ensureCorrectUser } = require('../middleware/auth');
+const { ensureCorrectUser } = require('../middleware/auth');
 const jwt = require('jsonwebtoken');
 const { SECRET } = require('../config');
 const { validate } = require('jsonschema');
@@ -85,9 +85,7 @@ router.post('/', async (req, res, next) => {
 
 router.get('/:username', async (req, res, next) => {
   try {
-    let username = req.params.username;
-
-    let user = await User.getUser(username);
+    const user = await User.getUser(req.params.username);
 
     return res.json({ user });
   } catch (err) {
@@ -102,22 +100,8 @@ router.get('/:username', async (req, res, next) => {
 
 router.patch('/:username', ensureCorrectUser, async (req, res, next) => {
   try {
-    // verify correct schema
-    // let validationResult = validate(req.body, updateUserSchema);
-
-    // if (!validationResult.valid) {
-    //   // pass validation errors to error handler
-    //   //  (the "stack" key is generally the most useful)
-    //   let message = validationResult.errors.map(error => error.stack);
-    //   let error = new Error(message);
-    //   error.status = 400;
-    //   error.message = message;
-    //   return next(error);
-    // }
-
-    // remove token from params
-    delete req.body.token;
-    const user = await User.updateUser(req.params.username, req.body);
+    const { token, ...payload } = req.body;
+    const user = await User.updateUser(req.params.username, payload);
 
     return res.json({ user });
   } catch (err) {
