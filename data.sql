@@ -1,6 +1,8 @@
+DROP TABLE IF EXISTS applications;
 DROP TABLE IF EXISTS jobs;
 DROP TABLE IF EXISTS companies;
 DROP TABLE IF EXISTS users;
+DROP TYPE app_state;
 
 CREATE TABLE companies
 (
@@ -63,4 +65,22 @@ CREATE TABLE users
     email text NOT NULL UNIQUE,
     photo_url text,
     is_admin boolean NOT NULL DEFAULT FALSE
+);
+
+CREATE TYPE app_state AS ENUM
+('interested', 'applied', 'accepted', 'rejected');
+CREATE TABLE applications
+(
+    username text,
+    FOREIGN KEY
+    (username) references users 
+    (username) ON
+    DELETE CASCADE,
+    job_id int,
+    FOREIGN KEY
+    (job_id) references jobs
+    (id) ON
+    DELETE CASCADE,
+    state app_state NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

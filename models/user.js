@@ -65,27 +65,71 @@ class User {
   }
 
   static async getUser(username, register = false) {
-    let result = await db.query(
+    let results = await db.query(
       `
       SELECT
-        *
+        u.username,
+        u.last_name,
+        u.first_name,
+        u.email,
+        u.photo_url,
+        a.state,
+        j.title,
+        j.salary,
+        j.equity,
+        j.company_handle
       FROM
-        users
+        users u
+      LEFT JOIN
+        applications a
+      ON
+        u.username = a.username
+      LEFT JOIN
+        jobs j
+      ON
+        a.job_id = j.id
       WHERE
-        username = $1
+        u.username = $1
     `,
       [username]
     );
 
-    let user = result.rows[0];
+    let u = results.rows[0];
 
-    if (!user && !register) {
+    let result;
+    if (u) {
+      result = {
+        user: u.username,
+        last_name: u.last_name,
+        first_name: u.first_name,
+        email: u.email,
+        photo_url: u.photo_url
+      };
+
+      let jobs = results.rows.map(j => {
+        return {
+          state: j.state,
+          title: j.title,
+          salary: j.salary,
+          equity: j.equity,
+          company_handle: j.company_handle
+        };
+      });
+
+      if (jobs[0].state === null) {
+        result.jobs = [];
+      } else {
+        result.jobs = jobs;
+      }
+    }
+
+    if (!u && !register) {
       let error = new Error(`No such user: ${username}`);
       error.status = 404;
       throw error;
     }
 
-    return result.rows[0];
+    return result;
   }
 
   static async updateUser(username, body) {
