@@ -6,6 +6,9 @@ const sqlForPartialUpdate = require('../../helpers/partialUpdate');
 let company;
 
 beforeEach(async () => {
+  // delete any entries
+  await db.query(`DELETE FROM companies`);
+
   let result = await db.query(
     `
     INSERT INTO companies (handle, name)
@@ -29,11 +32,6 @@ describe('partialUpdate()', async () => {
     expect(result.values).toContain('This is Google!');
     expect(result.values).toContain('google');
   });
-});
-
-afterEach(async () => {
-  // delete any entries
-  await db.query(`DELETE FROM companies`);
 });
 
 afterAll(async () => {

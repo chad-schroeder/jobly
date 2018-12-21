@@ -7,6 +7,10 @@ const request = require('supertest');
 let job;
 
 beforeEach(async () => {
+  // delete any entries
+  await db.query(`DELETE FROM jobs`);
+  await db.query(`DELETE FROM companies`);
+
   await db.query(
     `
     INSERT INTO companies(handle, name, num_employees, description, logo_url)
@@ -30,7 +34,9 @@ describe('Tests for GET /jobs', async () => {
   });
 
   test('Get jobs with a title like "test"', async () => {
-    const response = await request(app).get('/jobs?search=test');
+    const response = await request(app)
+      .get('/jobs')
+      .query({ search: 'test' });
     expect(response.status).toBe(200);
     expect(response.body.jobs).toHaveLength(1);
     expect(response.body.jobs[0].title).toEqual('test job');
@@ -106,12 +112,6 @@ describe('DELETE /jobs/:id', async () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ message: 'Job deleted' });
   });
-});
-
-afterEach(async () => {
-  // delete any entries
-  await db.query(`DELETE FROM jobs`);
-  await db.query(`DELETE FROM companies`);
 });
 
 afterAll(async () => {

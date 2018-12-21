@@ -8,6 +8,9 @@ let google;
 let apple;
 
 beforeEach(async () => {
+  // delete any entries
+  await db.query(`DELETE FROM companies`);
+
   google = await db.query(
     `
     INSERT INTO companies(handle, name, num_employees, description, logo_url)
@@ -67,44 +70,48 @@ describe('Get /companies', async () => {
     expect(response.body.companies[1].handle).toEqual('apple');
   });
   test('Get companies with a name like "goog"', async () => {
-    const response = await request(app).get('/companies?search=goog');
+    const response = await request(app)
+      .get('/companies')
+      .query({ search: 'goog' });
     expect(response.status).toBe(200);
     expect(response.body.companies[0].handle).toEqual('google');
   });
   test('Get companies with a name like "abcd', async () => {
-    const response = await request(app).get('/companies?search=abcd');
+    const response = await request(app)
+      .get('/companies')
+      .query({ search: 'abcd' });
     expect(response.status).toBe(404);
     expect(response.body.message).toEqual(
       'Your filters did not match any company.'
     );
   });
   test('Get companies with a name like "goog" and num_employees >= 5', async () => {
-    const response = await request(app).get(
-      '/companies?search=goog&min_employees=4000'
-    );
+    const response = await request(app)
+      .get('/companies')
+      .query({ search: 'goog', min_employees: '4000' });
     expect(response.status).toBe(200);
     expect(response.body.companies[0].handle).toEqual('google');
   });
   test('Get companies with a name like "goog" and num_employees >= 10000', async () => {
-    const response = await request(app).get(
-      '/companies?search=goog&min_employees=10000'
-    );
+    const response = await request(app)
+      .get('/companies')
+      .query({ search: 'goog', min_employees: 10000 });
     expect(response.status).toBe(404);
     expect(response.body.message).toEqual(
       'Your filters did not match any company.'
     );
   });
   test('Get companies with a name like "goog" and num_employees >= 4000 and num_employees <= 5000 ', async () => {
-    const response = await request(app).get(
-      '/companies?search=goog&min_employees=4000&max_employees=5000'
-    );
+    const response = await request(app)
+      .get('/companies')
+      .query({ search: 'goog', min_employees: 4000, max_employees: 5000 });
     expect(response.status).toBe(200);
     expect(response.body.companies[0].handle).toEqual('google');
   });
   test('Get companies with a name like "goog" and num_employees >= 10000 and num_employees <= 5000 ', async () => {
-    const response = await request(app).get(
-      '/companies?search=goog&min_employees=10000&max_employees=5000'
-    );
+    const response = await request(app)
+      .get('/companies')
+      .query({ search: 'goog', min_employees: 10000, max_employees: 5000 });
     expect(response.status).toBe(400);
     expect(response.body.error.message).toEqual(
       'min_employees cannot be greater than max_employees'
@@ -176,11 +183,6 @@ describe('DELETE /companies/:handle', async () => {
     expect(response.status).toBe(200);
     expect(response.body).toEqual({ message: 'Company deleted' });
   });
-});
-
-afterEach(async () => {
-  // delete any entries
-  await db.query(`DELETE FROM companies`);
 });
 
 afterAll(async () => {
